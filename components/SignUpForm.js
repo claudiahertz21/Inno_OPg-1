@@ -5,7 +5,6 @@ import {Button,Text,
     ActivityIndicator,
     StyleSheet,
 } from 'react-native';
-import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 function SignUpForm() {
@@ -17,37 +16,37 @@ function SignUpForm() {
 
     
     const auth = getAuth()
-    //Her defineres brugeroprettelsesknappen, som aktiverer handleSubmit igennem onPress på knappen
+    //Her defineres selve knappen med et button-element og en onPress-event, der aktiverer handleSubmit of dermed forsøger at oprette brugeren som besrkeevt nedenfor
     const renderButton = () => {
         return <Button onPress={() => handleSubmit()} title="Create user" />;
     };
 
 
     /*
-    Taget fra øvelsernse:
-   * Metoden herunder håndterer oprettelse af brugere ved at anvende den prædefinerede metode, som stilles til rådighed af firebase
-   * createUserWithEmailAndPassword tager en mail og et password med som argumenter og foretager et asynkront kald, der eksekverer en brugeroprettelse i firebase https://firebase.google.com/docs/auth/web/password-auth#create_a_password-based_account
-   * Opstår der fejl under forsøget på oprettelse, vil der i catch blive fremsat en fejlbesked, som, ved brug af
-   * setErrorMessage, angiver værdien for state-variablen, errormessage
-   */
+    /*
+    Metoden til både login og signup er den, lært i øvelserne. På et senere tidspunkt vil denne blive ændret til at være en mere sikker metode.
+    nuværende opgave handlede dog om at lære React Native, for senere at kunne bygge en loginmetode op på egen måde vurderet efter app'ens behov
+    Metoden bruger firebase til at håndtere login og signup, med indbyggede funtkioner som SignInWithEmailAndPassword og createUserWithEmailAndPassword.
+    createUserWithEmailAndPassword tager indtastet email og password som paramertre og opretter brugeren i databasen hvis dette er muligt.
+    Skulle dette slå fejl (fx ved forkert password) vil der blive fremsat en fejlmeddelelse, som udskrives i en tekstkomponent.
+    
+*/
       const handleSubmit = async() => {
         await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Signed in 
           const user = userCredential.user;
-          // ...
+          //Ved fejl:
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           setErrorMessage(errorMessage)
-          // ..
         });
       }
 
-//I return oprettes en tekstkomponent, der angiver at dette er SignUpfrom
-//Dernæst er der to inputfelter, som løbeende sætter værdien af state-variablerne, mail og password.
-// Afslutningsvis, angives det at, hvis errorMessage får fastsat en værdi, skal denne udskrives i en tekstkomponent.
+      //I return findes en tekstkomponent, der angiver at dette er sign up form. Denne kaldes i app.js og vises på skærmen
+      //Består af to inputfelter hvor brugeren indtaster email og password. Disse sætter løbende værdien af state-variablerne, email og password.
+      // Sker en fejl vises denne her
 
     return (
         <View>
@@ -73,7 +72,7 @@ function SignUpForm() {
     );
 }
 
-//Lokal styling til brug i SignUpForm
+//Styling med css
 const styles = StyleSheet.create({
     error: {
         color: 'red',
@@ -89,5 +88,5 @@ const styles = StyleSheet.create({
     },
 });
 
-//Eksport af Loginform, således denne kan importeres og benyttes i andre komponenter
+//Eksport af Loginform, således denne kan importeres og benyttes i andre filer
 export default SignUpForm
